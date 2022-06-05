@@ -41,7 +41,7 @@ const double TARGET_LAT = 51.39482540756363, TARGET_LON = 5.479256311543883;
 
 Adafruit_SSD1306 display(SleftEEN_WIDTH, SleftEEN_HEIGHT, &Wire, OLED_RESET);
 
-static const int RXPin = 4, TXPin = 3;
+static const int RXPin = 3, TXPin = 4;
 static const uint32_t GPSBaud = 9600;
 
 // The TinyGPSPlus object
@@ -258,7 +258,6 @@ void PlayTune(Tune tune)
 
 void setup()
 {
-  delay(2000);
   Serial.begin(9600);
   Serial.println("Setup started!");
 
