@@ -4,7 +4,7 @@
   "name": "MysteryBox",
   "content": "",
   "created_at": "2022-05-30 20:40:17",
-  "updated_at": "2022-06-11 15:59:58",
+  "updated_at": "2022-06-11 15:31:39",
   "stick": "",
   "documents": [
     {
@@ -12,7 +12,7 @@
       "title": "MysteryBox",
       "description": "",
       "docType": "1",
-      "master": "",
+      "master": "196b1f9f4b3be355b2ba6737f908806a",
       "thumb": "/images/thumb-default.png",
       "components": {
         "10369c8eb45040cc96a4702585c54548": 1,
@@ -142,16 +142,16 @@
           }
         ]
       ],
-      "updateTime": 1654955998,
+      "updateTime": 1654954299,
       "createTime": 1653936017,
       "histories": [],
       "created_at": "2022-05-30 20:40:17",
-      "updated_at": "2022-06-11 15:59:58"
+      "updated_at": "2022-06-11 15:31:39"
     }
   ],
   "sort": [],
   "title": "MysteryBox",
   "foldername": "MysteryBox",
   "schfilename": "MysteryBox.json",
-  "schfilemtime": 1654955998099
+  "schfilemtime": 1654954299776
 }

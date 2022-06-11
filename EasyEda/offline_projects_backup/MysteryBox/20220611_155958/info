@@ -12,7 +12,7 @@
       "title": "MysteryBox",
       "description": "",
       "docType": "1",
-      "master": "",
+      "master": "703c77e5539bb10fe63f9941ffcae0f3",
       "thumb": "/images/thumb-default.png",
       "components": {
         "10369c8eb45040cc96a4702585c54548": 1,

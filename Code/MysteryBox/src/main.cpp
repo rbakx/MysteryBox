@@ -1,5 +1,21 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 
+// This is a reverse geocaching application, called Mystery Box.
+// It uses a WEMOS S2 Pico board with OLED display, GY-NEO6MV2 GPS Module, SG90 Mini Servo, passive buzzer and a relay.
+// It has the following features:
+// - The box is operated by one push button only.
+// - The box becomes functional only from a specified date.
+// - Before that date, after pushing the button the box displays that the day has not arrived yet.
+// - After that date, the box displays a distance to a specified target.
+// - The box only opens when the target is within a specified range.
+// - Only a specified amount of attempts is allowed.
+// - The number of attempts can be reset by pressing the builtin button during startup.
+// - At startup or when the target is reached specified tunes are played.
+// - After displaying the relevant message, the box switches itself off using zero power.
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 #include <Arduino.h>
-#define ARDUINO_ESP32S2_DEV 1
 #include <SPI.h>
 #include <Wire.h>
 #include <Adafruit_I2CDevice.h>
@@ -8,8 +24,10 @@
 #include <TinyGPSPlus.h>
 #include "ESP32_ISR_Servo.h"
 #include <SoftwareSerial.h>
+#include <Preferences.h>
 
 #define LED_BUILTIN 10
+#define BUTTON_BUILTIN 0
 
 #define SleftEEN_WIDTH 128 // OLED display width, in pixels
 #define SleftEEN_HEIGHT 32 // OLED display height, in pixels
@@ -17,10 +35,11 @@
 #define TEXT_SIZE 3
 #define GPS_GET_DATA_TIME_MS 1000
 #define MYSTERY_YEAR 2022
-#define MYSTERY_MONTH 6
-#define MYSTERY_DAY 4
+#define MYSTERY_MONTH 7
+#define MYSTERY_DAY 2
 #define MYSTERY_HOUR 17
 #define MAX_TIME_POWER_ON_MS 120000
+#define TARGET_REACHED_METER 20
 
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
 // The pins for I2C are defined by the Wire-library.
@@ -28,21 +47,25 @@
 #define RELAIS_PIN_1 6
 #define RELAIS_PIN_2 7
 #define SERVO_PIN 13
-#define SERVO_OPEN 80
+#define SERVO_OPEN 50
 #define SERVO_CLOSE 0
 #define BUZZER_PIN 15
 #define BUZZER_CHANNEL 1
+#define NUMBER_OF_ATTEMPTS 10
 
 #define OLED_RESET 18 // Reset pin # (or -1 if sharing Arduino reset pin)
 // See datasheet for Address; 0x3D for 128x64, 0x3C for 128x32
 #define SleftEEN_ADDRESS 0x3C
 
-const double TARGET_LAT = 51.39482540756363, TARGET_LON = 5.479256311543883;
+const double TARGET_LAT = 52.055054270197665, TARGET_LON = 4.2132773178444065;
 
 Adafruit_SSD1306 display(SleftEEN_WIDTH, SleftEEN_HEIGHT, &Wire, OLED_RESET);
 
 static const int RXPin = 3, TXPin = 4;
 static const uint32_t GPSBaud = 9600;
+
+// Use Preferences library to store in flash memory.
+Preferences preferences;
 
 // The TinyGPSPlus object
 TinyGPSPlus gps;
@@ -51,6 +74,7 @@ TinyGPSPlus gps;
 SoftwareSerial ss(RXPin, TXPin);
 char messageBuf[80];
 
+// displayInfo not used, but left in as a reference.
 void displayInfo()
 {
   Serial.print(F("Location: "));
@@ -123,7 +147,15 @@ void InitDisplay()
   display.cp437(true); // Use full 256 char 'Code Page 437' font
 }
 
-void ShowTextOnDisplay(char *message)
+void ShowStaticTextOnDisplay(char *message)
+{
+  display.clearDisplay();
+  display.setCursor(0, 6);
+  display.print(message);
+  display.display();
+}
+
+void ShowScrollingTextOnDisplay(char *message)
 {
   int x, minX;
 
@@ -260,25 +292,32 @@ void setup()
 {
   Serial.begin(9600);
   Serial.println("Setup started!");
+  delay(1000);
 
+  pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(BUTTON_BUILTIN, INPUT_PULLUP);
   pinMode(RELAIS_PIN_1, OUTPUT_OPEN_DRAIN);
   pinMode(RELAIS_PIN_2, OUTPUT_OPEN_DRAIN);
   digitalWrite(RELAIS_PIN_1, LOW);
   digitalWrite(RELAIS_PIN_2, LOW);
 
+  preferences.begin("my-app", false);
+  InitDisplay();
+  int servoIndex = ESP32_ISR_Servos.setupServo(SERVO_PIN, 1000, 2000);
+  ESP32_ISR_Servos.setPosition(servoIndex, SERVO_CLOSE);
+  ss.begin(GPSBaud);
+
   InitTone();
   PlayTune(tuneArray[Hello]);
 
-  int servoIndex = ESP32_ISR_Servos.setupServo(SERVO_PIN, 1000, 2000);
-  ESP32_ISR_Servos.setPosition(servoIndex, SERVO_CLOSE);
+  // If builtin button is pressed during startup, reset attempts_left.
+  if (digitalRead(BUTTON_BUILTIN) == LOW)
+  {
+    preferences.putInt("attempts_left", NUMBER_OF_ATTEMPTS);
+    sprintf(messageBuf, "nog %d pogingen!", NUMBER_OF_ATTEMPTS);
+    ShowScrollingTextOnDisplay(messageBuf);
+  }
 
-  ss.begin(GPSBaud);
-  pinMode(LED_BUILTIN, OUTPUT);
-
-  InitDisplay();
-
-  int tmpDate = gps.date.year();
-  double tmpLocation = gps.location.lat();
   unsigned long startTime = millis();
   unsigned long currentTime;
   bool finished = false;
@@ -291,29 +330,71 @@ void setup()
       if (!CheckIfDayHasCome(MYSTERY_YEAR, MYSTERY_MONTH, MYSTERY_DAY))
       {
         sprintf(messageBuf, "Het is vandaag nog geen tijd, probeer het morgen nog eens!");
-        ShowTextOnDisplay(messageBuf);
+        ShowScrollingTextOnDisplay(messageBuf);
+        sprintf(messageBuf, "Mystery Box locked!");
+        ShowScrollingTextOnDisplay(messageBuf);
+        preferences.putInt("attempts_left", NUMBER_OF_ATTEMPTS);
         finished = true;
       }
       else
       {
         if (!CheckIfHourHasCome(MYSTERY_YEAR, MYSTERY_MONTH, MYSTERY_DAY, MYSTERY_HOUR))
         {
+          for (int i = 0; i < 3; i++)
+          {
+            PlayTune(tuneArray[Happy]);
+          }
           sprintf(messageBuf, "Vandaag is de dag, neem me mee!");
-          ShowTextOnDisplay(messageBuf);
+          ShowScrollingTextOnDisplay(messageBuf);
+          sprintf(messageBuf, "Mystery Box locked!");
+          ShowScrollingTextOnDisplay(messageBuf);
           finished = true;
         }
         else
         {
           if (gps.location.isValid() && gps.location.lat() != 0.0)
           {
-            sprintf(messageBuf, "De afstand tot het target is %d meter!", distanceToTarget());
-            ShowTextOnDisplay(messageBuf);
+            int attempts_left = preferences.getInt("attempts_left", -1); // return '-1' if 'attempts' does not exist yet.
+            if (attempts_left == 0)
+            {
+              sprintf(messageBuf, "Geen pogingen meer, vraag om hulp!");
+              ShowScrollingTextOnDisplay(messageBuf);
+            }
+            else
+            {
+              unsigned long distance = distanceToTarget();
+              sprintf(messageBuf, "De afstand tot het target is %d meter!", distance);
+              ShowScrollingTextOnDisplay(messageBuf);
+
+              if (distance > TARGET_REACHED_METER)
+              {
+                sprintf(messageBuf, "Mystery Box locked!");
+                ShowScrollingTextOnDisplay(messageBuf);
+                preferences.putInt("attempts_left", --attempts_left);
+                sprintf(messageBuf, "Je hebt nog %d pogingen!", attempts_left);
+                ShowScrollingTextOnDisplay(messageBuf);
+              }
+              else
+              {
+                sprintf(messageBuf, "Je hebt het target bereikt, de Mystery Box gaat nu open!");
+                ShowScrollingTextOnDisplay(messageBuf);
+                for (int i = 10; i >= 0; i--)
+                {
+                  sprintf(messageBuf, "   %d", i);
+                  ShowStaticTextOnDisplay(messageBuf);
+                  delay(1000);
+                }
+                ESP32_ISR_Servos.setPosition(servoIndex, SERVO_OPEN);
+                delay(1000); // Give servo time to open.
+                PlayTune(tuneArray[HappyBirthday]);
+              }
+            }
             finished = true;
           }
           else
           {
             sprintf(messageBuf, "Neem de Mysterybox mee naar buiten!");
-            ShowTextOnDisplay(messageBuf);
+            ShowScrollingTextOnDisplay(messageBuf);
           }
         }
       }
@@ -321,10 +402,9 @@ void setup()
     else
     {
       sprintf(messageBuf, "Neem de Mysterybox mee naar buiten!");
-      ShowTextOnDisplay(messageBuf);
+      ShowScrollingTextOnDisplay(messageBuf);
     }
   } while (currentTime - startTime < MAX_TIME_POWER_ON_MS && finished == false);
-
   // Switch off power relais.
   digitalWrite(RELAIS_PIN_1, HIGH);
   digitalWrite(RELAIS_PIN_2, HIGH);

@@ -1,0 +1,70 @@
+{
+  "uuid": "d7886f9562f8ec823b8e59334816e620",
+  "path": "Offline/MysteryBox",
+  "name": "MysteryBox",
+  "content": "",
+  "created_at": "2022-05-30 20:40:17",
+  "updated_at": "2022-06-11 14:27:33",
+  "stick": "",
+  "documents": [
+    {
+      "uuid": "73406840dec6f83ea1e735fbdcf3bb26",
+      "title": "MysteryBox",
+      "description": "",
+      "docType": "1",
+      "master": "29e5983e1de1ec2bb28509af8b1456fe",
+      "thumb": "/images/thumb-default.png",
+      "components": {
+        "10369c8eb45040cc96a4702585c54548": 1,
+        "b4f04e40cc1d45d0ab7418fbdd700aa5": 1
+      },
+      "BOM": [
+        [
+          "Value",
+          "Quantity",
+          "Package",
+          "Components",
+          "CustomPara"
+        ],
+        [
+          "GY-NEO6MV2",
+          1,
+          "GY-NEO6MV2",
+          "U1",
+          {
+            "BOM_Manufacturer": "",
+            "BOM_Manufacturer Part": "",
+            "BOM_Supplier Part": "",
+            "BOM_Supplier": "",
+            "puuid": "1141bceb38944c8986e8cf31b96ecf79",
+            "uuid": "10369c8eb45040cc96a4702585c54548"
+          }
+        ],
+        [
+          "WEMOS S2 PICO WITH OLED DISPLAY",
+          1,
+          "WEMOS S2 PICO WITH OLED DISPLAY",
+          "U2",
+          {
+            "BOM_Manufacturer": "",
+            "BOM_Manufacturer Part": "",
+            "BOM_Supplier Part": "",
+            "BOM_Supplier": "",
+            "puuid": "067ee2012a2a41c198ee373f9c2a293e",
+            "uuid": "b4f04e40cc1d45d0ab7418fbdd700aa5"
+          }
+        ]
+      ],
+      "updateTime": 1654950453,
+      "createTime": 1653936017,
+      "histories": [],
+      "created_at": "2022-05-30 20:40:17",
+      "updated_at": "2022-06-11 14:27:33"
+    }
+  ],
+  "sort": [],
+  "title": "MysteryBox",
+  "foldername": "MysteryBox",
+  "schfilename": "MysteryBox.json",
+  "schfilemtime": 1654950453116
+}

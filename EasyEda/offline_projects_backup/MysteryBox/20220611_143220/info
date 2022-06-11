@@ -4,7 +4,7 @@
   "name": "MysteryBox",
   "content": "",
   "created_at": "2022-05-30 20:40:17",
-  "updated_at": "2022-06-11 15:59:58",
+  "updated_at": "2022-06-11 14:32:20",
   "stick": "",
   "documents": [
     {
@@ -12,17 +12,14 @@
       "title": "MysteryBox",
       "description": "",
       "docType": "1",
-      "master": "",
+      "master": "150eb19cb77abcf69ff4a0e663acabcf",
       "thumb": "/images/thumb-default.png",
       "components": {
         "10369c8eb45040cc96a4702585c54548": 1,
         "b4f04e40cc1d45d0ab7418fbdd700aa5": 1,
         "4ab64659a85e495baa5791797f5c0ea1": 1,
         "e33cc1be9d5e4d929dda60b4eb023d72": 1,
-        "09121fa887d64d86acaab67e281d2c77": 1,
-        "05bf248712554fd4a7ac0d162bc51eea": 1,
-        "c1f9d9d58202436c9b124a97dde043c9": 1,
-        "323cbe63610f423687fdaae80db70ab4": 1
+        "09121fa887d64d86acaab67e281d2c77": 1
       },
       "BOM": [
         [
@@ -75,17 +72,6 @@
           }
         ],
         [
-          "BUZZERPTH-KIT",
-          1,
-          "BUZZER-12MM-KIT",
-          "SG1",
-          {
-            "BOM_Manufacturer Part": "",
-            "puuid": "9f342e961b9c46cea3a9a527d864ee41",
-            "uuid": "05bf248712554fd4a7ac0d162bc51eea"
-          }
-        ],
-        [
           "GY-NEO6MV2",
           1,
           "GY-NEO6MV2",
@@ -112,46 +98,18 @@
             "puuid": "067ee2012a2a41c198ee373f9c2a293e",
             "uuid": "b4f04e40cc1d45d0ab7418fbdd700aa5"
           }
-        ],
-        [
-          "3 x AA Battery Holder",
-          1,
-          "BAT-TH_2464",
-          "U3",
-          {
-            "BOM_Manufacturer": "Keystone Electronics",
-            "BOM_Manufacturer Part": "2464",
-            "BOM_Supplier": "Digi-Key",
-            "BOM_Supplier Part": "36-2464-ND",
-            "puuid": "30c9dc239afd4d7aa54f662151fee591",
-            "uuid": "c1f9d9d58202436c9b124a97dde043c9"
-          }
-        ],
-        [
-          "SG90 Servo",
-          1,
-          "SG90 SERVO",
-          "U4",
-          {
-            "BOM_Manufacturer": "",
-            "BOM_Manufacturer Part": "",
-            "BOM_Supplier Part": "",
-            "BOM_Supplier": "",
-            "puuid": "ea25241bf2ed479aa8093014c7215977",
-            "uuid": "323cbe63610f423687fdaae80db70ab4"
-          }
         ]
       ],
-      "updateTime": 1654955998,
+      "updateTime": 1654950740,
       "createTime": 1653936017,
       "histories": [],
       "created_at": "2022-05-30 20:40:17",
-      "updated_at": "2022-06-11 15:59:58"
+      "updated_at": "2022-06-11 14:32:20"
     }
   ],
   "sort": [],
   "title": "MysteryBox",
   "foldername": "MysteryBox",
   "schfilename": "MysteryBox.json",
-  "schfilemtime": 1654955998099
+  "schfilemtime": 1654950740961
 }
