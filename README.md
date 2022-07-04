@@ -12,4 +12,5 @@ To update the MysteryBox software take te following steps (Windows OS is assumed
 - Connect the ESP32 board using an USB cable to your laptop.
 - Click on the PlatformIO icon (alien symbol on the left).
 - Go to PROJECT TASKS and click on 'Upload'. This will build and upload the new code to the ESP32 board.
+
 GOOD LUCK!
