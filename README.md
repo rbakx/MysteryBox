@@ -1,8 +1,8 @@
 Instruction MysteryBox software update
 ======================================
-To update the MysteryBox software take te following steps (Windows OS is assumed)
+To update the MysteryBox software take te following steps (Windows OS is assumed):
 - Install VSCode and open it.
-- Add the PlatformIO IDE extension, see https://docs.platformio.org/en/stable/integration/ide/vscode.html
+- Add the PlatformIO IDE extension, see https://docs.platformio.org/en/stable/integration/ide/vscode.html.
 - Download the MysteryBox code from this page: go to Code -> Download ZIP.
 - Extract the zip file which will result in a MysteryBox-main folder.
 - With the Windows File Explorer, navigate to the MysteryBox-main / Code folder.
